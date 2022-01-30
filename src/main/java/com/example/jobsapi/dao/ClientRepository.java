@@ -1,4 +1,4 @@
-package com.example.jobsapi.repository;
+package com.example.jobsapi.dao;
 
 import com.example.jobsapi.model.Client;
 import org.springframework.data.repository.CrudRepository;
