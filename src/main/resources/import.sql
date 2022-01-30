@@ -1,0 +1,2 @@
+INSERT INTO client (id, name, email) VALUES (1, 'Test Tom', 'test.tom@email.com'), (2, 'Test John', 'test.john@email.com');
+INSERT INTO position (id, name, location, url) VALUES (1, 'bartender', 'Budapest', 'test url'), (2, 'actor', 'Vienna', 'test url');
