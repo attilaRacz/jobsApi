@@ -1,8 +1,9 @@
 package com.example.jobsapi.util;
 
 public enum ViolationType {
-    NAME_TOO_LONG,
+    CLIENT_NAME_TOO_LONG,
     INVALID_EMAIL,
-    EXISTING_EMAIL
-    // todo - to be extended
+    EXISTING_EMAIL,
+    POSITION_NAME_TOO_LONG,
+    POSITION_LOCATION_TOO_LONG
 }
