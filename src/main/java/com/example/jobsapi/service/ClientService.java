@@ -31,7 +31,6 @@ public class ClientService {
         // todo - should be a logger
         System.out.println("New client persisted: " + newClient);
 
-        // todo - return UUID
         return apiKey;
     }
 }
