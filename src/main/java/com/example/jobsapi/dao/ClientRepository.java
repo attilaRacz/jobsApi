@@ -3,5 +3,9 @@ package com.example.jobsapi.dao;
 import com.example.jobsapi.model.Client;
 import org.springframework.data.repository.CrudRepository;
 
-public interface ClientRepository extends CrudRepository<Client, Long> {
+import java.util.UUID;
+
+public interface ClientRepository extends CrudRepository<Client, UUID> {
+
+    Client findByEmail(String email);
 }
