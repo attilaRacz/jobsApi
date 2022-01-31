@@ -1,6 +1,6 @@
 package com.example.jobsapi.util;
 
-public enum ConstraintViolation {
+public enum ViolationType {
     NAME_TOO_LONG,
     INVALID_EMAIL,
     EXISTING_EMAIL
