@@ -14,8 +14,6 @@ public class Position {
 
     private String location;
 
-    private String url;
-
     public Long getId() {
         return id;
     }
@@ -40,21 +38,12 @@ public class Position {
         this.location = location;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
     @Override
     public String toString() {
         return "Position{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", location='" + location + '\'' +
-                ", url='" + url + '\'' +
                 '}';
     }
 }

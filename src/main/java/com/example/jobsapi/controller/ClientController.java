@@ -14,7 +14,7 @@ import java.util.UUID;
 public class ClientController {
 
     @Autowired
-    ClientService clientService;
+    private ClientService clientService;
 
     @PostMapping("/registerClient")
     public UUID registerClient(@RequestBody Client newClient) {
