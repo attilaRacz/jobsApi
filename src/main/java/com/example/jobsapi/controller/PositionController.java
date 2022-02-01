@@ -17,7 +17,17 @@ import java.util.Optional;
 public class PositionController {
 
     @Autowired
-    PositionService positionService;
+    private PositionService positionService;
+
+    @GetMapping("/{positionId}")
+    public Optional<Position> getPosition(@PathVariable String positionId) {
+        try {
+            return positionService.getPosition(positionId);
+        } catch (NumberFormatException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
 
     @PostMapping("/create")
     public String addPosition(@RequestBody Position newPosition, @RequestParam String apiKey, HttpServletRequest httpServletRequest) {
