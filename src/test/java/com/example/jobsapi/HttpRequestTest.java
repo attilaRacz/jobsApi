@@ -59,7 +59,7 @@ public class HttpRequestTest {
 
         ResponseEntity<Exception> responseEntity = restTemplate.postForEntity("http://localhost:" + port + "/clients/register", request, Exception.class);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(responseEntity.getBody().getMessage()).startsWith("Name is longer than");
+        assertThat(responseEntity.getBody().getMessage()).contains("Name is longer than");
     }
 
     @Test
@@ -122,12 +122,5 @@ public class HttpRequestTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(responseEntity.getBody().getMessage()).contains("Keyword is longer than");
         assertThat(responseEntity.getBody().getMessage()).contains("Location is longer than");
-    }
-
-    @Test
-    public void searchPositionShouldReturnCorrectValues() {
-        assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/positions/search?keyword=programmer&location=Paris&apiKey=" + apiKeyTest,
-                String.class))
-                .contains("programmer").contains("Paris");
     }
 }
