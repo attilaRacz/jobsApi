@@ -24,8 +24,9 @@ public class Validator {
         violationConstraints = new HashMap<>();
         violationConstraints.put(ViolationType.CLIENT_NAME_TOO_LONG, "Name is longer than " + maxClientNameLength + " characters");
         violationConstraints.put(ViolationType.INVALID_EMAIL, "Email address is invalid");
-        violationConstraints.put(ViolationType.EXISTING_EMAIL, "Email address already exists in the system");
+        violationConstraints.put(ViolationType.EXISTING_EMAIL, "Email address is already in use");
         violationConstraints.put(ViolationType.POSITION_NAME_TOO_LONG, "Name is longer than " + maxPositionNameLength + " characters");
+        violationConstraints.put(ViolationType.POSITION_KEYWORD_TOO_LONG, "Keyword is longer than " + maxPositionKeywordLength + " characters");
         violationConstraints.put(ViolationType.POSITION_LOCATION_TOO_LONG, "Location is longer than " + maxPositionLocationLength + " characters");
     }
 
