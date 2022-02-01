@@ -32,4 +32,18 @@ public class PositionController {
                     HttpStatus.BAD_REQUEST, ex.getMessage());
         }
     }
+
+    @GetMapping("/search")
+    public PositionSearchResult[] search(@RequestParam String apiKey, @RequestParam String keyword, @RequestParam String location) {
+        try {
+            positionService.validateApiKey(apiKey);
+            return positionService.searchPosition(keyword, location);
+        } catch (InvalidKeyException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, e.getMessage());
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
+    }
 }
