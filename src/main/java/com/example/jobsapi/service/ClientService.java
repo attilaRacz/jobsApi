@@ -20,11 +20,6 @@ public class ClientService {
     public UUID addClient(Client newClient) throws IllegalArgumentException {
         validator.validateClient(newClient);
 
-        UUID apiKey = clientRepository.save(newClient).getId();
-
-        // todo - should be a logger
-        System.out.println("New client persisted: " + newClient);
-
-        return apiKey;
+        return clientRepository.save(newClient).getId();
     }
 }

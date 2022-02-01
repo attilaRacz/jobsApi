@@ -32,9 +32,6 @@ public class PositionService {
 
         Long positionId = positionRepository.save(newPosition).getId();
 
-        // todo - should be a logger
-        System.out.println("New position persisted: " + newPosition);
-
         return requestUrl + positionId;
     }
 
