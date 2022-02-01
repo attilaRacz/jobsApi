@@ -17,6 +17,7 @@ public class Validator {
     private static final int maxClientNameLength = 100;
     private static final int maxPositionNameLength = 50;
     private static final int maxPositionLocationLength = 50;
+    private static final int maxPositionKeywordLength = 50;
 
     private static final Map<ViolationType, String> violationConstraints;
     static {
@@ -28,7 +29,7 @@ public class Validator {
         violationConstraints.put(ViolationType.POSITION_LOCATION_TOO_LONG, "Location is longer than " + maxPositionLocationLength + " characters");
     }
 
-    public Set<String> validateClient(Client client) {
+    public void validateClient(Client client) {
         Set<String> violations = new HashSet<>();
 
         if (!lengthIsValid(client.getName(), maxClientNameLength)) {
@@ -41,7 +42,33 @@ public class Validator {
             violations.add(violationConstraints.get(ViolationType.EXISTING_EMAIL));
         }
 
-        return violations;
+        handleViolations(violations);
+    }
+
+    public void validatePosition(Position position) {
+        Set<String> violations = new HashSet<>();
+
+        if (!lengthIsValid(position.getName(), maxPositionNameLength)) {
+            violations.add(violationConstraints.get(ViolationType.POSITION_NAME_TOO_LONG));
+        }
+        if (!lengthIsValid(position.getName(), maxPositionLocationLength)) {
+            violations.add(violationConstraints.get(ViolationType.POSITION_LOCATION_TOO_LONG));
+        }
+
+        handleViolations(violations);
+    }
+
+    public void validateExternalPositionSearch(String keyword, String location) {
+        Set<String> violations = new HashSet<>();
+
+        if (!lengthIsValid(keyword, maxPositionKeywordLength)) {
+            violations.add(violationConstraints.get(ViolationType.POSITION_KEYWORD_TOO_LONG));
+        }
+        if (!lengthIsValid(location, maxPositionLocationLength)) {
+            violations.add(violationConstraints.get(ViolationType.POSITION_LOCATION_TOO_LONG));
+        }
+
+        handleViolations(violations);
     }
 
     private boolean lengthIsValid(String name, int maxLength) {
@@ -56,20 +83,21 @@ public class Validator {
         return clientRepository.findByEmail(email) == null;
     }
 
-    public Set<String> validatePosition(Position position) {
-        Set<String> violations = new HashSet<>();
-
-        if (!lengthIsValid(position.getName(), maxPositionNameLength)) {
-            violations.add(violationConstraints.get(ViolationType.POSITION_NAME_TOO_LONG));
+    private void handleViolations(Set<String> violations) throws IllegalArgumentException {
+        if (!violations.isEmpty()) {
+            throw new IllegalArgumentException("Validation error: " + violations);
         }
-        if (!lengthIsValid(position.getName(), maxPositionLocationLength)) {
-            violations.add(violationConstraints.get(ViolationType.POSITION_LOCATION_TOO_LONG));
-        }
-
-        return violations;
     }
 
     public boolean apiKeyIsValid(UUID apiKey) {
         return clientRepository.existsById(apiKey);
+    }
+
+    public Long validatePositionId(String positionIdString) {
+        try {
+            return Long.parseLong(positionIdString);
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("Invalid position ID: " + positionIdString);
+        }
     }
 }

@@ -18,13 +18,8 @@ public class ClientService {
     @Autowired
     private ClientRepository clientRepository;
 
-    public UUID addClient(Client newClient) throws Exception {
-        Set<String> violations = validator.validateClient(newClient);
-
-        if (!violations.isEmpty()) {
-            // todo - find or implement right exception
-            throw new Exception("Validation error: " + violations);
-        }
+    public UUID addClient(Client newClient) throws IllegalArgumentException {
+        validator.validateClient(newClient);
 
         UUID apiKey = clientRepository.save(newClient).getId();
 

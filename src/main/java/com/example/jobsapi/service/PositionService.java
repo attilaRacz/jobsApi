@@ -2,11 +2,15 @@ package com.example.jobsapi.service;
 
 import com.example.jobsapi.dao.PositionRepository;
 import com.example.jobsapi.model.Position;
+import com.example.jobsapi.util.PositionSearchResult;
 import com.example.jobsapi.util.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Set;
+import java.security.InvalidKeyException;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -18,27 +22,54 @@ public class PositionService {
     @Autowired
     private PositionRepository positionRepository;
 
-    public String addPosition(Position newPosition) throws Exception {
-        Set<String> violations = validator.validatePosition(newPosition);
+    public Optional<Position> getPosition(String positionIdString) {
+        Long positionId = validator.validatePositionId(positionIdString);
+        return positionRepository.findById(positionId);
+    }
 
-        if (!violations.isEmpty()) {
-            // todo - find or implement right exception
-            throw new Exception("Validation error: " + violations);
-        }
+    public String addPosition(Position newPosition, String requestUrl) {
+        validator.validatePosition(newPosition);
 
-        String positionUrl = positionRepository.save(newPosition).getUrl();
+        Long positionId = positionRepository.save(newPosition).getId();
 
         // todo - should be a logger
         System.out.println("New position persisted: " + newPosition);
 
-        return positionUrl;
+        return requestUrl + positionId;
     }
 
-    public void validateApiKey(String apiKeyString) throws Exception {
-        UUID apiKey = UUID.fromString(apiKeyString.replaceAll("(.{8})(.{4})(.{4})(.{4})(.+)", "$1-$2-$3-$4-$5"));
+    public PositionSearchResult[] searchPosition(String keyword, String location) {
+        String ExternalApiUrl = "http://localhost:8080/externalApi/search";
+
+        validator.validateExternalPositionSearch(keyword, location);
+
+        String urlTemplate = createUrlTemplate(ExternalApiUrl, keyword, location);
+        RestTemplate restTemplate = new RestTemplate();
+
+        return restTemplate.getForEntity(urlTemplate, PositionSearchResult[].class).getBody();
+    }
+
+    private String createUrlTemplate(String url, String keyword, String location) {
+        return UriComponentsBuilder.fromHttpUrl(url)
+                .queryParam("keyword", keyword)
+                .queryParam("location", location)
+                .encode()
+                .toUriString();
+    }
+
+    public void validateApiKey(String apiKeyString) throws InvalidKeyException {
+        UUID apiKey = formatApiKey(apiKeyString);
 
         if (!validator.apiKeyIsValid(apiKey)) {
-            throw new Exception("Invalid api key");
+            throw new InvalidKeyException("Invalid api key");
+        }
+    }
+
+    private UUID formatApiKey(String apiKeyString) {
+        if (apiKeyString.contains("-")) {
+            return UUID.fromString(apiKeyString);
+        } else {
+            return UUID.fromString(apiKeyString.replaceAll("(.{8})(.{4})(.{4})(.{4})(.+)", "$1-$2-$3-$4-$5"));
         }
     }
 }
