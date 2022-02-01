@@ -1,2 +1,2 @@
-INSERT INTO client (id, name, email) VALUES (RANDOM_UUID(), 'Test Tom', 'test.tom@email.com'), (RANDOM_UUID(), 'Test John', 'test.john@email.com');
+INSERT INTO client (id, name, email) VALUES ('552470a3305e49f7b79011cd3699486e', 'Test Tom', 'test.tom@email.com'), (RANDOM_UUID(), 'Test John', 'test.john@email.com');
 INSERT INTO position (id, name, location) VALUES (1, 'bartender', 'Budapest'), (2, 'actor', 'Vienna');

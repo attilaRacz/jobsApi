@@ -16,7 +16,7 @@ public class ClientController {
     @Autowired
     private ClientService clientService;
 
-    @PostMapping("/registerClient")
+    @PostMapping("/register")
     public UUID registerClient(@RequestBody Client newClient) {
         try {
             return clientService.addClient(newClient);

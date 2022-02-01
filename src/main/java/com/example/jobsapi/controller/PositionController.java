@@ -44,7 +44,7 @@ public class PositionController {
     }
 
     @GetMapping("/search")
-    public PositionSearchResult[] search(@RequestParam String apiKey, @RequestParam String keyword, @RequestParam String location) {
+    public PositionSearchResult[] searchPosition(@RequestParam String apiKey, @RequestParam String keyword, @RequestParam String location) {
         try {
             positionService.validateApiKey(apiKey);
             return positionService.searchPosition(keyword, location);
