@@ -21,7 +21,7 @@ public class HttpRequestTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private String apiKeyTest = "552470a3305e49f7b79011cd3699486e";
+    private final String apiKeyTest = "552470a3305e49f7b79011cd3699486e";
 
     @Test
     public void registerClientShouldReturnErrorMessageWhenEmailIsInvalid() {
@@ -29,16 +29,39 @@ public class HttpRequestTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<String> request =
-                new HttpEntity<>("{\"name\":\"Test Jackson Toooooooooooooooooooooooooo Loooooooooooooooooooooooooooong Naaaaaaaaaaaaaaaaaaaaaaaaaaame\", \"email\":\"invalidemail\"}", headers);
+                new HttpEntity<>("{\"name\":\"Test Jackson\", \"email\":\"invalidemail\"}", headers);
 
         ResponseEntity<Exception> responseEntity = restTemplate.postForEntity("http://localhost:" + port + "/clients/register", request, Exception.class);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(responseEntity.getBody().getMessage()).contains("Name is longer than");
         assertThat(responseEntity.getBody().getMessage()).contains("Email address is invalid");
     }
 
-    //todo registerClientShouldReturnErrorMessageWhenEmailAlreadyExists
-    //todo registerClientShouldReturnErrorMessageWhenNameIsTooLong
+    @Test
+    public void registerClientShouldReturnErrorMessageWhenEmailAlreadyExists() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> request =
+                new HttpEntity<>("{\"name\":\"Test Jackson\", \"email\":\"test.tom@email.com\"}", headers);
+
+        ResponseEntity<Exception> responseEntity = restTemplate.postForEntity("http://localhost:" + port + "/clients/register", request, Exception.class);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(responseEntity.getBody().getMessage()).contains("Email address is already in use");
+    }
+
+    @Test
+    public void registerClientShouldReturnErrorMessageWhenNameIsTooLong() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> request =
+                new HttpEntity<>("{\"name\":\"Test Jackson Toooooooooooooooooooooooooo Loooooooooooooooooooooooooooong Naaaaaaaaaaaaaaaaaaaaaaaaaaame\", \"email\":\"test.jackson@email.com\"}", headers);
+
+        ResponseEntity<Exception> responseEntity = restTemplate.postForEntity("http://localhost:" + port + "/clients/register", request, Exception.class);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(responseEntity.getBody().getMessage()).startsWith("Name is longer than");
+    }
+
     @Test
     public void createUserShouldReturnUUID() {
         HttpHeaders headers = new HttpHeaders();
@@ -52,8 +75,13 @@ public class HttpRequestTest {
                 String.class).replace("\"", ""));
     }
 
-    //todo getPositionShouldReturnErrorMessageWhenApiKeyIsInvalid
-    //todo getPositionShouldReturnErrorMessageWhenIdIsInvalid
+    @Test
+    public void getPositionShouldReturnErrorMessageWhenIdIsInvalid() {
+        ResponseEntity<Exception> responseEntity = restTemplate.getForEntity("http://localhost:" + port + "/positions/invalid", Exception.class);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(responseEntity.getBody().getMessage()).startsWith("Invalid position ID");
+    }
+
     @Test
     public void getPositionShouldReturnCorrectPosition() {
         assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/positions/1",
@@ -61,9 +89,18 @@ public class HttpRequestTest {
                 .contains("bartender").contains("Budapest");
     }
 
-    //todo addPositionShouldReturnErrorMessageWhenApiKeyIsInvalid
-    //todo addPositionShouldReturnErrorMessageWhenNameOrLocationAreTooLong
-    //todo addPositionShouldReturnUrlOfNewPosition
+    @Test
+    public void addPositionShouldReturnErrorMessageWhenNameOrLocationAreTooLong() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> request =
+                new HttpEntity<>("{\"name\":\"looooooooooooooooooooongpositiooooooooooooooooooooooooooon\", \"location\":\"looooooooooooooooooooonglocatioooooooooooooooooooooooooooooooooon\"}", headers);
+        assertThat(this.restTemplate.postForObject("http://localhost:" + port + "/positions/create?apiKey=" + apiKeyTest,
+                request, String.class))
+                .contains("Name is longer than").contains("Location is longer than");
+    }
+
     @Test
     public void addPositionShouldReturnUrlOfNewPosition() {
         HttpHeaders headers = new HttpHeaders();
@@ -76,9 +113,17 @@ public class HttpRequestTest {
                 .startsWith("http://localhost:" + port + "/positions/");
     }
 
-    //todo searchPositionShouldReturnErrorMessageWhenApiKeyIsInvalid
-    //todo searchPositionShouldReturnErrorMessageWhenKeywordOrLocationAreTooLong
-    //todo searchPositionShouldReturnCorrectValues
+    @Test
+    public void searchPositionShouldReturnErrorMessageWhenKeywordOrLocationAreTooLong() {
+        String keyword = "keywordistoooooooooooooooooooolooooooooooooooooooooong";
+        String location = "locationistoooooooooooooooooooolooooooooooooooooooooong";
+
+        ResponseEntity<Exception> responseEntity = restTemplate.getForEntity("http://localhost:" + port + "/positions/search?keyword=" + keyword + "&location=" + location + "&apiKey=" + apiKeyTest, Exception.class);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(responseEntity.getBody().getMessage()).contains("Keyword is longer than");
+        assertThat(responseEntity.getBody().getMessage()).contains("Location is longer than");
+    }
+
     @Test
     public void searchPositionShouldReturnCorrectValues() {
         assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/positions/search?keyword=programmer&location=Paris&apiKey=" + apiKeyTest,
