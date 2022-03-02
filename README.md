@@ -25,11 +25,11 @@ pozició.
 lokációt (pl.: "london", validáció: max 50 karakter). A szerver első lépésben ellenőrzi az
 api kulcs érvényességét. Nem érvényes api kulcs esetén hibaüzenettel tér vissza.
 Érvényes api kulcs esetén az átadott adatokkal bekérdez a következő helyekre:
-- "External" Job API (http://localhost:8080/positions/search)
-- Adatbázisban tárolt állások
+  - "External" Job API (http://localhost:8080/positions/search)
+  - Adatbázisban tárolt állások
 
 4. A fenti adatokat össze kell fésülni és a kliens alkalmazásnak visszaadni a következő
 adatokat:
-- Job title - az állás megnevezése
-- Location - a munkavégzés földrajzi helye
-- URL - a hírdetéshez tartozó URL
+  - Job title - az állás megnevezése
+  - Location - a munkavégzés földrajzi helye
+  - URL - a hírdetéshez tartozó URL
